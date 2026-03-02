@@ -1,5 +1,6 @@
 .spinner {
     /* Your styling */
+    font-family: 'Courier New', Courier, monospace;
     color: beige;
     font-size: medium;
     animation: spin 1s linear infinite; /* Required */
