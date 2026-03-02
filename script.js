@@ -10,7 +10,7 @@ async function searchCountry(countryName) {
     errorDiv.textContent = '';
 
     try {
-        const response = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}`);
+        const response = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true`);
         if (!response.ok) throw new Error('Country not found');
         
         const data = await response.json();
