@@ -6,11 +6,11 @@ async function searchCountry(countryName) {
 
     spinner.style.display = 'block';
     countryInfo.innerHTML = '';
-    borderSection.innerHTML = '';/* */
+    borderSection.innerHTML = '';
     errorDiv.textContent = '';
 
     try {
-    /*  */
+    
         const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
         if (!response.ok) throw new Error('Country not found');
         
@@ -25,23 +25,40 @@ async function searchCountry(countryName) {
             <img src="${country.flags.svg}" alt="${country.name.common} flag" width="200">
         `;
 
+    if (country.borders && country.borders.length > 0) {
+    borderSection.innerHTML = '<h3>Bordering Countries:</h3>';
     
-        if (country.borders) {
-            const borderCodes = country.borders.join(',');
-            const borderRes = await fetch(`https://restcountries.com{borderCodes}`);
+    const borderCodes = country.borders.join(',');
+    const borderRes = await fetch(`https://restcountries.com/v3.1/alpha/{borderCodes}`);
+    let borderData = await borderRes.json();
 
-            const borders = await borderRes.json();
+    
+    if (!Array.isArray(borderData)) {
+        borderData = [borderData];
+    }
 
-            borderSection.innerHTML = '<h3>Bordering Countries:</h3>';
-            borders.forEach(neighbor => {
-                const neighborDiv = document.createElement('div');
-                neighborDiv.innerHTML = `
-                    <p>${neighbor.name.common}</p>
-                    <img src="${neighbor.flags.svg}" alt="${neighbor.name.common} flag" width="100">
-                `;
-                borderSection.appendChild(neighborDiv);
-            });
+    
+    borderData.forEach(neighbor => {
+        if (neighbor && neighbor.name) {/*  */
+            const neighborDiv = document.createElement('div');
+            
+            const name = neighbor.name?.common || "Unknown";
+            const flag = neighbor.flags?.svg || "";
+
+            neighborDiv.innerHTML = `
+                <p>${name}</p>
+                <img src="${flag}" alt="${name} flag" width="100">
+            `;
+            borderSection.appendChild(neighborDiv);
         }
+    });
+} else {
+    
+    borderSection.innerHTML = '<p>No bordering countries.</p>';
+}
+
+
+
 
     } catch (error) {
         errorDiv.textContent = `Error: ${error.message}`;
